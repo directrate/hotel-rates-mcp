@@ -127,7 +127,8 @@ code the chain does not know, cost nothing. The full rules:
 ## Examples
 
 - [`examples/cash-or-points`](examples/cash-or-points): is this stay better paid in cash or in points?
-  Two tool calls and a break-even, in Claude with no code or in your own stack.
+  Two tool calls and a break-even: in Claude with no code, on the Claude API in one file, or with a
+  plain MCP client in your own stack.
 
 ## About the data
 

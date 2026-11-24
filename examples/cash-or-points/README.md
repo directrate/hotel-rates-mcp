@@ -17,7 +17,35 @@ Add directrate as a connector ([steps](../../README.md#claudeai-claude-desktop-c
 in a chat from the **+** menu, and ask the question in your own words. Claude decides which tools to
 call; when we asked on 24 November 2026 it called `hotels`, `shop` and `award`, which cost 3 credits.
 
-## In your own stack
+## On the Claude API, in one file
+
+[`agent.ts`](agent.ts) is the whole agent, under a hundred lines, with no tool loop. Anthropic's
+[MCP connector](https://platform.claude.com/docs/en/agents-and-tools/mcp-connector) calls the MCP
+server on Claude's side, so one request returns the tool calls, what they returned, and the answer.
+
+```sh
+export DIRECTRATE_API_KEY=dr_live_...   # free at https://directrate.dev/dashboard/keys
+export ANTHROPIC_API_KEY=sk-ant-...     # https://console.anthropic.com
+npm install
+npx tsx agent.ts "Hyatt Place Chicago Downtown The Loop, 2 nights from 15 January"
+```
+
+It prints each tool call as Claude made it, the first line of what the server answered, then Claude's
+answer. Three things in the file are worth a second look:
+
+- **The connector block.** `mcp_servers` names the server and carries your directrate key as
+  `authorization_token`; Anthropic sends it as the bearer token when it calls us. It is your key, your
+  credits and your quota, so use a key made for this and revoke it when you are done.
+- **Two tools, not sixteen.** `default_config: { enabled: false }` with two entries in `configs` keeps
+  the other fourteen tool descriptions out of the prompt.
+- **A break-even, not a verdict.** The prompt asks for "use points if you value a point at less than
+  1.4 cents", because what a point is worth is the traveller's call and not the model's.
+
+This file is new. It is checked against the types of `@anthropic-ai/sdk` 1.13.0, and the two tool
+calls it leads to are the ones `tools.ts` below makes against the live server. If it does not run for
+you, write to <hello@directrate.dev>.
+
+## With another model, or no model
 
 [`tools.ts`](tools.ts) makes the two calls with the MCP TypeScript SDK and no model at all: connect
 with your key as a bearer token, list the tools to hand to your model, run the calls it asks for.
@@ -43,15 +71,14 @@ point is worth is the traveller's call, not the model's. Add `parity` to compare
 with Booking.com, Expedia, Hotels.com, Trip.com and Agoda, or `calendar` for a month of nights in one
 call.
 
-On the Claude API you do not need an MCP client of your own: Anthropic's
-[MCP connector](https://platform.claude.com/docs/en/agents-and-tools/mcp-connector) takes the same
-URL, with your key as its `authorization_token`.
-
 ## What it costs
 
-One credit per tool call on Hyatt, so two for the question when the agent calls `hotels` and `award`.
+**directrate:** one credit per tool call on Hyatt, so two for the question when the agent calls
+`hotels` and `award`.
 Every answer states its own price, and a call that fails costs nothing. The Free plan's 250 credits a
 month cover about 125 questions like this one. Other chains weigh differently:
 <https://directrate.dev/docs/credits-and-pricing>.
+
+**Your model:** its own tokens. With two tools enabled the request is small.
 
 The same walk-through on the site: <https://directrate.dev/docs/cash-or-points-agent>.

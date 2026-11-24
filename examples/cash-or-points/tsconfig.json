@@ -6,7 +6,12 @@
     "strict": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ]
   },
-  "include": ["tools.ts"]
+  "include": [
+    "agent.ts",
+    "tools.ts"
+  ]
 }
