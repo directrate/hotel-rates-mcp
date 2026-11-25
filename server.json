@@ -1,0 +1,33 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.directrate/hotel-rates-mcp",
+  "title": "directrate: hotel rates",
+  "description": "Live hotel rates, member rates and award points from 11 chains, beside 5 booking sites.",
+  "version": "1.0.0",
+  "websiteUrl": "https://directrate.dev/mcp",
+  "repository": {
+    "url": "https://github.com/directrate/hotel-rates-mcp",
+    "source": "github"
+  },
+  "icons": [
+    {
+      "src": "https://directrate.dev/favicon.svg",
+      "mimeType": "image/svg+xml",
+      "sizes": ["any"]
+    }
+  ],
+  "remotes": [
+    {
+      "type": "streamable-http",
+      "url": "https://api.directrate.dev/mcp",
+      "headers": [
+        {
+          "name": "x-api-key",
+          "description": "A directrate API key, free at https://directrate.dev/dashboard/keys. Leave it out in a client that signs in with OAuth.",
+          "isRequired": false,
+          "isSecret": true
+        }
+      ]
+    }
+  ]
+}
